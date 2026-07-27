@@ -26,6 +26,16 @@ def get_last_date(df):
 
     return df["DATE1"].max()
 
+
+def is_master_data_up_to_date():
+    master_df = load_master_data()
+    last_date = get_last_date(master_df)
+
+    if last_date is None:
+        return False
+
+    return last_date.date() >= datetime.today().date()
+
 def download_bhavcopy(date):
 
     filename = f"sec_bhavdata_full_{date.strftime('%d%m%Y')}.csv"
@@ -69,13 +79,13 @@ def update_master_data():
     last_date = get_last_date(master_df)
 
     if last_date is None:
-        # First run
+        # First run: download 2 years of data
         current_date = datetime.today() - timedelta(days=730)
+        end_date = datetime.today()
     else:
-        # Start from next day
+        # Already have data; continue from the next date
         current_date = last_date + timedelta(days=1)
-
-    end_date = datetime.today()
+        end_date = datetime.today()
 
     new_data = []
 

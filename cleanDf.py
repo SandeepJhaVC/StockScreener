@@ -8,6 +8,12 @@ def clean_dataframe(df):
     for col in df.select_dtypes(include="object"):
         df[col] = df[col].str.strip()
 
+    # Keep only equity rows if the SERIES column exists
+    if "SERIES" in df.columns:
+        df = df[df["SERIES"].astype(str).str.upper() == "EQ"]
+    elif "series" in df.columns:
+        df = df[df["series"].astype(str).str.upper() == "EQ"]
+
     # Convert date
     df["DATE1"] = pd.to_datetime(df["DATE1"], errors="coerce")
 
